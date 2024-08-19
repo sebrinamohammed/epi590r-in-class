@@ -1,4 +1,7 @@
+setwd("/Users/sebrinamohammed/Desktop/Rbootcamp/Repo from Prof/data/raw")
+
 library(tidyverse)
+
 
 # column names
 nlsy_cols <- c("glasses", "eyesight", "sleep_wkdy", "sleep_wknd",
