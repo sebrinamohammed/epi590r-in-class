@@ -1,0 +1,114 @@
+---
+title: "gtsummary in quarto"
+format: 
+  html:
+    theme: quartz
+execute: 
+  echo: false        #echo false tells knitr not to show the code within the chun
+  error: true       #this will print out the error in the viewer
+  
+---
+
+```{r}
+##install.packages("tidyverse")
+##install.packages("gtsummary")
+##install.packages("here")
+#1 output: false
+library(tidyverse)
+library(gtsummary)
+nlsy_cols <- c("glasses", "eyesight", "sleep_wkdy", "sleep_wknd", 
+               "id", "nsibs", "samp", "race_eth", "sex", "region", 
+               "income", "res_1980", "res_2002", "age_bir")
+nlsy <- read_csv(here::here("data", "raw", "nlsy.csv"), 
+                 na = c("-1", "-2", "-3", "-4", "-5", "-998"),
+                 skip = 1, col_names = nlsy_cols) |> 
+  mutate(region_cat = factor(region, labels = c("Northeast", "North Central", "South", "West")),
+         sex_cat = factor(sex, labels = c("Male", "Female")),
+         race_eth_cat = factor(race_eth, labels = c("Hispanic", "Black", "Non-Black, Non-Hispanic")),
+         eyesight_cat = factor(eyesight, labels = c("Excellent", "Very good", "Good", "Fair", "Poor")),
+         glasses_cat = factor(glasses, labels = c("No", "Yes"))) 
+nrow(nlsy)
+
+```
+
+# Customization of `tbl_summary()`
+
+```{r}
+tbl_summary(
+  nlsy,
+  by = sex_cat,
+  include = c(sex_cat, race_eth_cat, region_cat,eyesight_cat, glasses, age_bir))
+```
+```{r}
+#tbl_summary(
+ # NLSY,
+ # by = sex_cat,
+ # include = c(sex_cat, race_eth_cat, region_cat,
+          #    eyesight_cat, glasses, age_bir))
+
+```
+
+this is the number of people in the data #if it is outside the chunk, then it would show up in the view table
+```{r}
+ #| echo: false
+  2*2
+```
+
+
+
+```{r}
+
+```
+
+
+
+
+```{r}
+#| label: tbl-one
+#| tbl-cap: "This is a great table"
+
+tbl_summary(
+  nlsy,
+  by = sex_cat,
+  include = c(sex_cat, race_eth_cat, region_cat,
+              eyesight_cat, glasses, age_bir),
+  label = list(
+    race_eth_cat ~ "Race/ethnicity",
+    region_cat ~ "Region",
+    eyesight_cat ~ "Eyesight",
+    glasses ~ "Wears glasses",
+    age_bir ~ "Age at first birth"
+  ),
+  missing_text = "Missing")
+
+
+
+```
+```{r}
+#| label: fig-hist
+#| fig-cap: "This is a histogram"
+hist(rnorm(100))
+
+tbl_summary(
+  nlsy,
+  by = sex_cat,
+  include = c(sex_cat, race_eth_cat, region_cat,
+              eyesight_cat, glasses, age_bir),
+  label = list(
+    race_eth_cat ~ "Race/ethnicity",
+    region_cat ~ "Region",
+    eyesight_cat ~ "Eyesight",
+    glasses ~ "Wears glasses",
+    age_bir ~ "Age at first birth"
+  ),
+  missing_text = "Missing")
+
+
+
+```
+
+the average sleep hours is `r mean(nlsy$sleep_wkdy, na.rm = TRUE)` for people sleeping on the week day
+
+the average sleep hours is `r mean(nlsy$sleep_wknd, na.rm = TRUE)` for people sleeping on the weekend
+
+

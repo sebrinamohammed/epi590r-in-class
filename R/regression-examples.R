@@ -18,19 +18,19 @@ nlsy <- read_csv(here::here("data", "raw", "nlsy.csv"),
 
 tbl_uvregression(
 	nlsy,
-	y = income,
-	include = c(sex_cat, race_eth_cat,
-							eyesight_cat, income, age_bir),
+	x = sex_cat,
+	include = c(nsibs, sleep_wkdy,sleep_wknd,income),
 	method = lm)
 
-
+#Instead of odds ratios for wearing glasses, as in the example, we want risk ratios.
+#We can do this by specifying in the regression family = binomial(link = "log").
+#Regress glasses on eyesight_cat sex_cat and create a table showing
 tbl_uvregression(
 	nlsy,
 	y = glasses,
-	include = c(sex_cat, race_eth_cat,
-							eyesight_cat, glasses, age_bir),
-	method = glm,
-	method.args = list(family = binomial()),
+	include = c(eyesight_cat, sex_cat),
+	method = glm,  #has to be logistic (not linear) bc its cataorical.
+	method.args = list(family = binomial(link = "log")),
 	exponentiate = TRUE)
 
 
@@ -46,14 +46,14 @@ linear_model_int <- lm(income ~ sex_cat*age_bir + race_eth_cat,
 											 data = nlsy)
 
 
-logistic_model <- glm(glasses ~ eyesight_cat + sex_cat + income,
-											data = nlsy, family = binomial())
+poisson_model  <- glm(nsibs ~ eyesight_cat + sex_cat + income,
+											data = nlsy, family = poisson())
 
 
 ## Tables
-
+###poisson (regression?)
 tbl_regression(
-	linear_model,
+	poisson_model,
 	intercept = TRUE,
 	label = list(
 		sex_cat ~ "Sex",
