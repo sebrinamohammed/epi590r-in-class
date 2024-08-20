@@ -108,7 +108,27 @@ tbl_summary(
 ```
 
 the average sleep hours is `r mean(nlsy$sleep_wkdy, na.rm = TRUE)` for people sleeping on the week day
+```{r}
+mean_wkdy <- mean(nlsy$sleep_wkdy, na.rm = TRUE)
+median_wknd <- median(nlsy$sleep_wknd, na.rm = TRUE)
+```
 
-the average sleep hours is `r mean(nlsy$sleep_wknd, na.rm = TRUE)` for people sleeping on the weekend
+the median sleep hours is `r median(nlsy$sleep_wknd, na.rm = TRUE)` for people sleeping on the weekend
 
+```{r}
+
+#library(gtsummary)
+income_table <- tbl_uvregression(
+  nlsy,
+  y = income,
+  include = c(
+    sex_cat, race_eth_cat,
+    eyesight_cat, income, age_bir
+  ),
+  method = lm
+)
+
+inline_text(table1, variable = "median_wknd")
+```
+inline_text(table1, variable = "sleep_wknd") 
 
